@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickRun – Instant Pickup</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.info-pills { display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
+.pill {
+  background: var(--card);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  box-shadow: var(--shadow);
+}
+
+.pkg-card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.pkg-card:active { transform: scale(0.98); }
+.pkg-left { display: flex; gap: 14px; align-items: center; }
+
+.pkg-icon {
+  width: 56px; height: 56px;
+  background: var(--orange-light);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+}
+
+.pkg-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.pkg-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.pkg-price { color: var(--orange); font-weight: 700; font-size: 16px; margin-top: 6px; }
+
+.add-btn {
+  background: var(--orange);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+}
+
+.qty-ctrl { display: flex; align-items: center; gap: 12px; }
+.qty-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+.qty-btn.minus { background: var(--border); }
+.qty-btn.plus { background: var(--orange); color: white; }
+.qty-val { font-weight: 700; font-size: 16px; min-width: 18px; text-align: center; }
+
+.cart-bar {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  background: white;
+  padding: 16px 22px 28px;
+  border-radius: 28px 28px 0 0;
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.1);
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 40;
+}
+.cart-bar.visible { transform: translateY(0); }
+.cart-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.cart-icon-wrap {
+  position: relative;
+  width: 52px; height: 52px;
+  background: var(--orange);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: white;
+}
+.cart-badge-num {
+  position: absolute; top: -6px; right: -6px;
+  background: #1a1a1a; color: white;
+  font-size: 11px; width: 20px; height: 20px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;
+}
+.cart-info .items-count { font-size: 13px; color: var(--text-muted); }
+.cart-info .total { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="screen">
+
+    <div class="page-header animate-in">
+      <a class="back-btn" href="dashboard.html">←</a>
+      <div class="page-header-text">
+        <h2>Instant Pickup</h2>
+        <p>Select your package type</p>
+      </div>
+    </div>
+
+    <div class="info-pills animate-in">
+      <div class="pill">⏱ 15–30 min</div>
+      <div class="pill">📍 Up to 10 km</div>
+      <div class="pill">⚡ Same day</div>
+    </div>
+
+    <!-- Cards -->
+    <div class="pkg-card animate-in">
+      <div class="pkg-left">
+        <div class="pkg-icon">📦</div>
+        <div>
+          <div class="pkg-name">Small Package</div>
+          <div class="pkg-sub">Up to 5 kg</div>
+          <div class="pkg-price">$5.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-ip-sm" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('ip-sm',-1,5)">−</button>
+        <div class="qty-val" id="qty-ip-sm">1</div>
+        <button class="qty-btn plus" onclick="changeQty('ip-sm',1,5)">+</button>
+      </div>
+      <button class="add-btn" id="add-ip-sm" onclick="addItem('ip-sm','Small Package (Pickup)',5)">+ Add</button>
+    </div>
+
+    <div class="pkg-card animate-in">
+      <div class="pkg-left">
+        <div class="pkg-icon">📦</div>
+        <div>
+          <div class="pkg-name">Medium Package</div>
+          <div class="pkg-sub">Up to 15 kg</div>
+          <div class="pkg-price">$10.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-ip-md" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('ip-md',-1,10)">−</button>
+        <div class="qty-val" id="qty-ip-md">1</div>
+        <button class="qty-btn plus" onclick="changeQty('ip-md',1,10)">+</button>
+      </div>
+      <button class="add-btn" id="add-ip-md" onclick="addItem('ip-md','Medium Package (Pickup)',10)">+ Add</button>
+    </div>
+
+    <div class="pkg-card animate-in">
+      <div class="pkg-left">
+        <div class="pkg-icon">📦</div>
+        <div>
+          <div class="pkg-name">Large Package</div>
+          <div class="pkg-sub">Up to 30 kg</div>
+          <div class="pkg-price">$18.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-ip-lg" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('ip-lg',-1,18)">−</button>
+        <div class="qty-val" id="qty-ip-lg">1</div>
+        <button class="qty-btn plus" onclick="changeQty('ip-lg',1,18)">+</button>
+      </div>
+      <button class="add-btn" id="add-ip-lg" onclick="addItem('ip-lg','Large Package (Pickup)',18)">+ Add</button>
+    </div>
+
+    <div class="pkg-card animate-in">
+      <div class="pkg-left">
+        <div class="pkg-icon">⚡</div>
+        <div>
+          <div class="pkg-name">Express Pickup</div>
+          <div class="pkg-sub">Priority handling</div>
+          <div class="pkg-price">$8.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-ip-ex" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('ip-ex',-1,8)">−</button>
+        <div class="qty-val" id="qty-ip-ex">1</div>
+        <button class="qty-btn plus" onclick="changeQty('ip-ex',1,8)">+</button>
+      </div>
+      <button class="add-btn" id="add-ip-ex" onclick="addItem('ip-ex','Express Pickup',8)">+ Add</button>
+    </div>
+
+    <div class="pkg-card animate-in">
+      <div class="pkg-left">
+        <div class="pkg-icon">🧴</div>
+        <div>
+          <div class="pkg-name">Fragile Items</div>
+          <div class="pkg-sub">Extra care handling</div>
+          <div class="pkg-price">$4.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-ip-fr" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('ip-fr',-1,4)">−</button>
+        <div class="qty-val" id="qty-ip-fr">1</div>
+        <button class="qty-btn plus" onclick="changeQty('ip-fr',1,4)">+</button>
+      </div>
+      <button class="add-btn" id="add-ip-fr" onclick="addItem('ip-fr','Fragile Items',4)">+ Add</button>
+    </div>
+
+  </div>
+
+  <div class="cart-bar" id="cartBar">
+    <div class="cart-row">
+      <div class="cart-icon-wrap">🛒
+        <div class="cart-badge-num" id="cart-badge">0</div>
+      </div>
+      <div class="cart-info">
+        <div class="items-count" id="cart-items-label">0 item(s)</div>
+        <div class="total" id="cart-total">$0.00</div>
+      </div>
+    </div>
+    <button class="btn-primary ripple" onclick="window.location.href='cart.html'">Continue to Cart →</button>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+requireAuth();
+
+function addItem(id, name, price) {
+  Cart.add({ id, name, price });
+  document.getElementById('add-' + id).style.display = 'none';
+  document.getElementById('ctrl-' + id).style.display = 'flex';
+  document.getElementById('qty-' + id).textContent = Cart.get().find(i => i.id === id)?.qty || 1;
+  updateCartBar();
+  showToast(name + ' added!', '✓');
+}
+
+function changeQty(id, delta, price) {
+  if (delta > 0) Cart.add({ id, name: id, price });
+  else Cart.remove(id);
+  const item = Cart.get().find(i => i.id === id);
+  if (!item) {
+    document.getElementById('add-' + id).style.display = '';
+    document.getElementById('ctrl-' + id).style.display = 'none';
+  } else {
+    document.getElementById('qty-' + id).textContent = item.qty;
+  }
+  updateCartBar();
+}
+
+function updateCartBar() {
+  const count = Cart.count();
+  document.getElementById('cart-items-label').textContent = `${count} item(s)`;
+  document.getElementById('cart-total').textContent = fmt(Cart.total());
+  document.getElementById('cart-badge').textContent = count;
+  document.getElementById('cartBar').classList.toggle('visible', count > 0);
+}
+
+Cart.get().forEach(item => {
+  const a = document.getElementById('add-' + item.id);
+  const c = document.getElementById('ctrl-' + item.id);
+  const q = document.getElementById('qty-' + item.id);
+  if (a && c && q) { a.style.display = 'none'; c.style.display = 'flex'; q.textContent = item.qty; }
+});
+updateCartBar();
+</script>
+</body>
+</html>

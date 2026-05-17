@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickRun – Bike Delivery</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.info-pills { display: flex; gap: 10px; margin-bottom: 22px; }
+.pill {
+  background: var(--card);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pkg-card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pkg-left { display: flex; gap: 14px; align-items: center; }
+
+.pkg-icon {
+  width: 56px; height: 56px;
+  background: var(--orange-light);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+}
+
+.pkg-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.pkg-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.pkg-price { color: var(--orange); font-weight: 700; font-size: 16px; margin-top: 6px; }
+
+.qty-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.qty-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.qty-btn.minus { background: var(--border); color: var(--text); }
+.qty-btn.plus { background: var(--orange); color: white; }
+.qty-btn:active { transform: scale(0.9); }
+
+.qty-val { font-weight: 700; font-size: 16px; min-width: 18px; text-align: center; }
+
+.add-btn {
+  background: var(--orange);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.add-btn:active { transform: scale(0.95); }
+
+/* Cart bar */
+.cart-bar {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  background: white;
+  padding: 16px 22px 28px;
+  border-radius: 28px 28px 0 0;
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.1);
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 40;
+}
+
+.cart-bar.visible { transform: translateY(0); }
+
+.cart-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+
+.cart-icon-wrap {
+  position: relative;
+  width: 52px; height: 52px;
+  background: var(--orange);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: white;
+}
+
+.cart-badge-num {
+  position: absolute;
+  top: -6px; right: -6px;
+  background: #1a1a1a;
+  color: white;
+  font-size: 11px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+
+.cart-info .items-count { font-size: 13px; color: var(--text-muted); }
+.cart-info .total { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="screen">
+
+    <!-- Header -->
+    <div class="page-header animate-in">
+      <a class="back-btn" href="dashboard.html">←</a>
+      <div class="page-header-text">
+        <h2>Bike Delivery</h2>
+        <p>Select your package type</p>
+      </div>
+    </div>
+
+    <!-- Pills -->
+    <div class="info-pills animate-in">
+      <div class="pill">⏱ 15–30 min</div>
+      <div class="pill">📍 Up to 10 km</div>
+      <div class="pill">🛡 Insured</div>
+    </div>
+
+    <!-- Package Cards -->
+    <div class="pkg-card animate-in" id="card-bike-sm">
+      <div class="pkg-left">
+        <div class="pkg-icon">📦</div>
+        <div>
+          <div class="pkg-name">Small Package</div>
+          <div class="pkg-sub">Up to 5 kg</div>
+          <div class="pkg-price">$5.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-bike-sm" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('bike-sm', -1, 5)">−</button>
+        <div class="qty-val" id="qty-bike-sm">1</div>
+        <button class="qty-btn plus" onclick="changeQty('bike-sm', 1, 5)">+</button>
+      </div>
+      <button class="add-btn" id="add-bike-sm" onclick="addItem('bike-sm','Small Package',5)">+ Add</button>
+    </div>
+
+    <div class="pkg-card animate-in" id="card-bike-md">
+      <div class="pkg-left">
+        <div class="pkg-icon">📦</div>
+        <div>
+          <div class="pkg-name">Medium Package</div>
+          <div class="pkg-sub">Up to 15 kg</div>
+          <div class="pkg-price">$10.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-bike-md" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('bike-md', -1, 10)">−</button>
+        <div class="qty-val" id="qty-bike-md">1</div>
+        <button class="qty-btn plus" onclick="changeQty('bike-md', 1, 10)">+</button>
+      </div>
+      <button class="add-btn" id="add-bike-md" onclick="addItem('bike-md','Medium Package',10)">+ Add</button>
+    </div>
+
+    <div class="pkg-card animate-in" id="card-bike-lg">
+      <div class="pkg-left">
+        <div class="pkg-icon">📦</div>
+        <div>
+          <div class="pkg-name">Large Package</div>
+          <div class="pkg-sub">Up to 30 kg</div>
+          <div class="pkg-price">$18.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-bike-lg" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('bike-lg', -1, 18)">−</button>
+        <div class="qty-val" id="qty-bike-lg">1</div>
+        <button class="qty-btn plus" onclick="changeQty('bike-lg', 1, 18)">+</button>
+      </div>
+      <button class="add-btn" id="add-bike-lg" onclick="addItem('bike-lg','Large Package',18)">+ Add</button>
+    </div>
+
+    <div class="pkg-card animate-in">
+      <div class="pkg-left">
+        <div class="pkg-icon">⚡</div>
+        <div>
+          <div class="pkg-name">Express Bike</div>
+          <div class="pkg-sub">Priority dispatch</div>
+          <div class="pkg-price">$12.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-bike-ex" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('bike-ex', -1, 12)">−</button>
+        <div class="qty-val" id="qty-bike-ex">1</div>
+        <button class="qty-btn plus" onclick="changeQty('bike-ex', 1, 12)">+</button>
+      </div>
+      <button class="add-btn" id="add-bike-ex" onclick="addItem('bike-ex','Express Bike',12)">+ Add</button>
+    </div>
+
+  </div>
+
+  <!-- Cart Bar -->
+  <div class="cart-bar" id="cartBar">
+    <div class="cart-row">
+      <div class="cart-icon-wrap">
+        🛒
+        <div class="cart-badge-num" id="cart-badge">0</div>
+      </div>
+      <div class="cart-info">
+        <div class="items-count" id="cart-items-label">0 item(s)</div>
+        <div class="total" id="cart-total">$0.00</div>
+      </div>
+    </div>
+    <button class="btn-primary ripple" onclick="goToCart()">Continue to Cart →</button>
+  </div>
+
+</div>
+
+<script src="js/app.js"></script>
+<script>
+requireAuth();
+
+function addItem(id, name, price) {
+  Cart.add({ id, name, price });
+  document.getElementById('add-' + id).style.display = 'none';
+  document.getElementById('ctrl-' + id).style.display = 'flex';
+  document.getElementById('qty-' + id).textContent = Cart.get().find(i => i.id === id)?.qty || 1;
+  updateCartBar();
+  showToast(name + ' added!', '✓');
+}
+
+function changeQty(id, delta, price) {
+  const name = document.getElementById('qty-' + id).closest('.pkg-card')?.querySelector('.pkg-name')?.textContent;
+  if (delta > 0) Cart.add({ id, name: name || id, price });
+  else Cart.remove(id);
+
+  const item = Cart.get().find(i => i.id === id);
+  if (!item) {
+    document.getElementById('add-' + id).style.display = '';
+    document.getElementById('ctrl-' + id).style.display = 'none';
+  } else {
+    document.getElementById('qty-' + id).textContent = item.qty;
+  }
+  updateCartBar();
+}
+
+function updateCartBar() {
+  const count = Cart.count();
+  const total = Cart.total();
+  document.getElementById('cart-items-label').textContent = `${count} item(s)`;
+  document.getElementById('cart-total').textContent = fmt(total);
+  document.getElementById('cart-badge').textContent = count;
+  document.getElementById('cartBar').classList.toggle('visible', count > 0);
+}
+
+function goToCart() {
+  window.location.href = 'cart.html';
+}
+
+// Restore cart state on load
+Cart.get().forEach(item => {
+  const addBtn = document.getElementById('add-' + item.id);
+  const ctrl = document.getElementById('ctrl-' + item.id);
+  const qtyEl = document.getElementById('qty-' + item.id);
+  if (addBtn && ctrl && qtyEl) {
+    addBtn.style.display = 'none';
+    ctrl.style.display = 'flex';
+    qtyEl.textContent = item.qty;
+  }
+});
+updateCartBar();
+</script>
+</body>
+</html>

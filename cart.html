@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickRun – Cart</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.cart-item {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ci-left { display: flex; gap: 12px; align-items: center; }
+.ci-icon { width: 48px; height: 48px; background: var(--orange-light); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.ci-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.ci-price { font-size: 13px; color: var(--orange); font-weight: 600; margin-top: 3px; }
+.ci-right { display: flex; align-items: center; gap: 10px; }
+.qty-btn { width: 30px; height: 30px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.qty-btn.minus { background: var(--border); }
+.qty-btn.plus { background: var(--orange); color: white; }
+.qty-val { font-weight: 700; font-size: 15px; min-width: 16px; text-align: center; }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+.empty-state .empty-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
+.empty-state h3 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.empty-state p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+
+/* Promo code */
+.promo-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.promo-input input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+}
+.promo-input input:focus { border-color: var(--orange); }
+.promo-apply {
+  padding: 12px 18px;
+  background: var(--orange);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Summary */
+.summary-card {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.summary-row:last-child { border-bottom: none; color: var(--text); font-weight: 700; font-size: 16px; }
+.summary-row.total .val { color: var(--orange); font-family: 'Syne', sans-serif; font-size: 20px; }
+
+.discount { color: #28a745 !important; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="screen">
+
+    <div class="page-header animate-in">
+      <a class="back-btn" onclick="history.back()">←</a>
+      <div class="page-header-text">
+        <h2>My Cart</h2>
+        <p id="cart-count-label">0 items</p>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state animate-in" id="emptyState" style="display:none;">
+      <div class="empty-icon">🛒</div>
+      <h3>Cart is Empty</h3>
+      <p>Add packages from our services to get started</p>
+      <button class="btn-primary" onclick="window.location.href='dashboard.html'" style="width:auto;padding:12px 32px;">Browse Services</button>
+    </div>
+
+    <!-- Cart items -->
+    <div id="cartItems"></div>
+
+    <!-- Promo -->
+    <div id="cartFooter" style="display:none;">
+      <div class="section-header animate-in">
+        <div class="section-title">Promo Code</div>
+      </div>
+      <div class="promo-input animate-in">
+        <input type="text" id="promoInput" placeholder="Enter promo code">
+        <button class="promo-apply" onclick="applyPromo()">Apply</button>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary-card animate-in">
+        <div class="summary-row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+        <div class="summary-row"><span>Delivery Fee</span><span>$2.00</span></div>
+        <div class="summary-row discount" id="discountRow" style="display:none;"><span>Promo Discount</span><span id="discountVal">-$0.00</span></div>
+        <div class="summary-row total"><span>Total</span><span class="val" id="totalVal">$0.00</span></div>
+      </div>
+
+      <button class="btn-primary ripple animate-in" onclick="placeOrder()">Place Order →</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+requireAuth();
+
+let promoApplied = false;
+
+function renderCart() {
+  const items = Cart.get();
+  const container = document.getElementById('cartItems');
+  const emptyState = document.getElementById('emptyState');
+  const footer = document.getElementById('cartFooter');
+  const countLabel = document.getElementById('cart-count-label');
+
+  container.innerHTML = '';
+
+  if (items.length === 0) {
+    emptyState.style.display = 'block';
+    footer.style.display = 'none';
+    countLabel.textContent = '0 items';
+    return;
+  }
+
+  emptyState.style.display = 'none';
+  footer.style.display = 'block';
+  countLabel.textContent = `${Cart.count()} item(s)`;
+
+  const icons = { bike: '🚴', truck: '🚚', ip: '📦', default: '📦' };
+
+  items.forEach(item => {
+    const icon = item.id.startsWith('tk') ? '🚚' : item.id.startsWith('bike') ? '🚴' : '📦';
+    const div = document.createElement('div');
+    div.className = 'cart-item animate-in';
+    div.innerHTML = `
+      <div class="ci-left">
+        <div class="ci-icon">${icon}</div>
+        <div>
+          <div class="ci-name">${item.name}</div>
+          <div class="ci-price">${fmt(item.price)} each</div>
+        </div>
+      </div>
+      <div class="ci-right">
+        <button class="qty-btn minus" onclick="decItem('${item.id}')">−</button>
+        <div class="qty-val">${item.qty}</div>
+        <button class="qty-btn plus" onclick="incItem('${item.id}', ${item.price})">+</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  updateSummary();
+}
+
+function incItem(id, price) {
+  const item = Cart.get().find(i => i.id === id);
+  if (item) Cart.add({ id, name: item.name, price });
+  renderCart();
+}
+
+function decItem(id) {
+  Cart.remove(id);
+  renderCart();
+}
+
+function updateSummary() {
+  const sub = Cart.total();
+  const delivery = 2;
+  const discount = promoApplied ? sub * 0.1 : 0;
+  const total = sub + delivery - discount;
+
+  document.getElementById('subtotal').textContent = fmt(sub);
+  document.getElementById('totalVal').textContent = fmt(total);
+  if (promoApplied) {
+    document.getElementById('discountRow').style.display = 'flex';
+    document.getElementById('discountVal').textContent = '-' + fmt(discount);
+  }
+}
+
+function applyPromo() {
+  const code = document.getElementById('promoInput').value.trim().toUpperCase();
+  const valid = ['QUICK10', 'RUN20', 'SAVE10'];
+  if (valid.includes(code)) {
+    promoApplied = true;
+    showToast('Promo applied! 10% off', '🎉');
+    updateSummary();
+  } else {
+    showToast('Invalid promo code', '✗');
+  }
+}
+
+function placeOrder() {
+  Cart.clear();
+  sessionStorage.setItem('qr_last_order', JSON.stringify({ id: 'QR' + Date.now().toString().slice(-6), status: 'In Progress', time: new Date().toLocaleString() }));
+  window.location.href = 'ordersuccess.html';
+}
+
+renderCart();
+</script>
+</body>
+</html>
