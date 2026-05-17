@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickRun – Login</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body {
+  background: linear-gradient(145deg, #2a1a0a 0%, #1a1a1a 60%, #0d0d0d 100%);
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.login-wrap {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  body {
+    background: linear-gradient(145deg, #1a0d04 0%, #1a1a1a 100%);
+  }
+
+  .login-wrap {
+    min-height: auto;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+    max-height: 90vh;
+  }
+
+  .login-form {
+    overflow-y: auto;
+  }
+}
+
+/* Hero top section */
+.login-hero {
+  background: linear-gradient(160deg, #f28c38 0%, #d96f1a 100%);
+  padding: 60px 32px 50px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.login-hero::before {
+  content: '';
+  position: absolute;
+  right: -40px; top: -40px;
+  width: 200px; height: 200px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 50%;
+}
+
+.login-hero::after {
+  content: '';
+  position: absolute;
+  right: 30px; top: 60px;
+  width: 100px; height: 100px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+
+.logo-mark {
+  width: 64px;
+  height: 64px;
+  background: rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.4);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.login-hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  color: white;
+  line-height: 1.15;
+}
+
+.login-hero p {
+  color: rgba(255,255,255,0.75);
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+/* Bottom form */
+.login-form {
+  background: #ffffff;
+  flex: 1;
+  border-radius: 32px 32px 0 0;
+  padding: 32px 28px 28px;
+  margin-top: -20px;
+  position: relative;
+  z-index: 2;
+}
+
+.login-form h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+
+.login-form .sub {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 24px;
+}
+
+.input-wrap {
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.input-wrap .icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #bbb;
+}
+
+.input-wrap input {
+  width: 100%;
+  padding: 14px 16px 14px 42px;
+  border: 1.5px solid #eee;
+  border-radius: 14px;
+  background: #f8f8f8;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: #1a1a1a;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.input-wrap input:focus {
+  border-color: var(--orange);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(242,140,56,0.1);
+}
+
+.forgot-link {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.forgot-link a {
+  color: var(--orange);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.error-box {
+  background: #fff3f3;
+  border: 1px solid #ffd0d0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #d63031;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.hint-box {
+  background: var(--orange-pale);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #666;
+  margin-top: 16px;
+  line-height: 1.7;
+}
+
+.hint-box strong { color: var(--orange); }
+
+.divider-text {
+  text-align: center;
+  color: #ccc;
+  font-size: 13px;
+  margin: 16px 0;
+  position: relative;
+}
+
+.divider-text::before,
+.divider-text::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 38%;
+  height: 1px;
+  background: #eee;
+}
+.divider-text::before { left: 0; }
+.divider-text::after { right: 0; }
+
+.social-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1.5px solid #eee;
+  border-radius: 14px;
+  background: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #444;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.social-btn:hover { border-color: var(--orange); color: var(--orange); }
+</style>
+</head>
+<body>
+
+<div class="login-wrap">
+
+  <div class="login-hero">
+    <div class="logo-mark">⚡</div>
+    <h1>Quick<br>Run</h1>
+    <p>Your city, delivered fast.</p>
+  </div>
+
+  <div class="login-form">
+    <h2>Welcome back 👋</h2>
+    <p class="sub">Sign in to continue</p>
+
+    <div class="error-box" id="errorBox">⚠ Invalid credentials. Please try again.</div>
+
+    <div class="input-wrap">
+      <span class="icon">👤</span>
+      <input type="text" id="username" placeholder="Username" autocomplete="off">
+    </div>
+
+    <div class="input-wrap">
+      <span class="icon">📱</span>
+      <input type="tel" id="mobile" placeholder="Mobile Number" autocomplete="off">
+    </div>
+
+    <div class="input-wrap">
+      <span class="icon">🔒</span>
+      <input type="password" id="password" placeholder="Password">
+    </div>
+
+    <div class="forgot-link"><a href="#">Forgot Password?</a></div>
+
+    <button class="btn-primary ripple" onclick="loginUser()">Login →</button>
+
+    <div class="hint-box">
+      Demo credentials:<br>
+      <strong>admin</strong> / <strong>9999999999</strong> / <strong>admin123</strong><br>
+      <strong>demo</strong> / <strong>8888888888</strong> / <strong>demo123</strong>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/app.js"></script>
+<script>
+function loginUser() {
+  const username = document.getElementById('username').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
+  const password = document.getElementById('password').value;
+  const errorBox = document.getElementById('errorBox');
+
+  const users = [
+    { username: 'admin', mobile: '9999999999', password: 'admin123', name: 'John Doe', email: 'john@quickrun.com' },
+    { username: 'demo', mobile: '8888888888', password: 'demo123', name: 'Jane Smith', email: 'jane@quickrun.com' }
+  ];
+
+  const valid = users.find(u => u.username === username && u.mobile === mobile && u.password === password);
+
+  if (valid) {
+    Auth.login(valid);
+    errorBox.style.display = 'none';
+    showToast('Welcome back, ' + valid.name.split(' ')[0] + '!', '👋');
+    setTimeout(() => window.location.href = 'dashboard.html', 800);
+  } else {
+    errorBox.style.display = 'block';
+    document.querySelectorAll('.input-wrap input').forEach(i => {
+      i.style.borderColor = '#ffccc7';
+    });
+    setTimeout(() => {
+      document.querySelectorAll('.input-wrap input').forEach(i => i.style.borderColor = '');
+    }, 1000);
+  }
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') loginUser();
+});
+</script>
+</body>
+</html>

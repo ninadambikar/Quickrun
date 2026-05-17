@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickRun – Notifications</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.notif-card {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: transform 0.15s;
+  position: relative;
+}
+.notif-card:active { transform: scale(0.98); }
+.notif-card.unread { border-left: 3px solid var(--orange); }
+
+.notif-icon {
+  width: 46px; height: 46px;
+  border-radius: 14px;
+  background: var(--orange-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.notif-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.notif-msg { font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+.notif-time { font-size: 11px; color: var(--text-light); margin-top: 6px; }
+.unread-dot { position: absolute; top: 16px; right: 16px; width: 8px; height: 8px; background: var(--orange); border-radius: 50%; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="screen">
+
+    <div class="page-header animate-in">
+      <a class="back-btn" href="dashboard.html">←</a>
+      <div class="page-header-text">
+        <h2>Notifications</h2>
+        <p>3 unread</p>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px;" class="animate-in">
+      <div class="section-title">Today</div>
+    </div>
+
+    <div class="notif-card unread animate-in" onclick="markRead(this)">
+      <div class="notif-icon">🚴</div>
+      <div>
+        <div class="notif-title">Order Out for Delivery!</div>
+        <div class="notif-msg">Your order #QR123456 is on the way. Rider Alex is 15 min away.</div>
+        <div class="notif-time">2 min ago</div>
+      </div>
+      <div class="unread-dot"></div>
+    </div>
+
+    <div class="notif-card unread animate-in" onclick="markRead(this)">
+      <div class="notif-icon">🎉</div>
+      <div>
+        <div class="notif-title">Cashback Credited!</div>
+        <div class="notif-msg">$2.50 cashback has been added to your wallet from order #QR123456.</div>
+        <div class="notif-time">1 hour ago</div>
+      </div>
+      <div class="unread-dot"></div>
+    </div>
+
+    <div class="notif-card unread animate-in" onclick="markRead(this)">
+      <div class="notif-icon">🏷️</div>
+      <div>
+        <div class="notif-title">Special Offer!</div>
+        <div class="notif-msg">Use code QUICK10 and get 10% off your next delivery. Valid today only!</div>
+        <div class="notif-time">3 hours ago</div>
+      </div>
+      <div class="unread-dot"></div>
+    </div>
+
+    <div style="margin-top:20px;margin-bottom:16px;" class="animate-in">
+      <div class="section-title">Yesterday</div>
+    </div>
+
+    <div class="notif-card animate-in" onclick="markRead(this)">
+      <div class="notif-icon">✅</div>
+      <div>
+        <div class="notif-title">Delivery Complete</div>
+        <div class="notif-msg">Order #QR123455 delivered successfully. Rate your experience!</div>
+        <div class="notif-time">Jan 17 • 11:30 AM</div>
+      </div>
+    </div>
+
+    <div class="notif-card animate-in" onclick="markRead(this)">
+      <div class="notif-icon">💳</div>
+      <div>
+        <div class="notif-title">Wallet Top-up Successful</div>
+        <div class="notif-msg">$50.00 added to your wallet via UPI payment.</div>
+        <div class="notif-time">Jan 17 • 10:15 AM</div>
+      </div>
+    </div>
+
+    <div class="notif-card animate-in" onclick="markRead(this)">
+      <div class="notif-icon">🚚</div>
+      <div>
+        <div class="notif-title">Order Confirmed</div>
+        <div class="notif-msg">Truck delivery order #QR123455 has been confirmed.</div>
+        <div class="notif-time">Jan 17 • 10:00 AM</div>
+      </div>
+    </div>
+
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-name">QuickRun</div>
+    </div>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span>Home</a>
+    <a class="nav-item" href="orders.html"><span class="nav-icon">📋</span>Orders</a>
+    <a class="nav-item" href="wallet.html"><span class="nav-icon">💼</span>Wallet</a>
+    <a class="nav-item" href="profile.html"><span class="nav-icon">👤</span>Profile</a>
+  </nav>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+requireAuth();
+function markRead(el) {
+  el.classList.remove('unread');
+  const dot = el.querySelector('.unread-dot');
+  if (dot) dot.remove();
+  const unreadCount = document.querySelectorAll('.notif-card.unread').length;
+  document.querySelector('.page-header-text p').textContent = unreadCount > 0 ? `${unreadCount} unread` : 'All read';
+}
+</script>
+</body>
+</html>

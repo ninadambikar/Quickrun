@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickRun – Truck Delivery</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.info-pills { display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
+.pill { background: var(--card); padding: 8px 14px; border-radius: 20px; font-size: 12px; color: var(--text-muted); font-weight: 500; box-shadow: var(--shadow); }
+
+.hero-banner {
+  background: linear-gradient(130deg, #1a1a1a, #2d2d2d);
+  border-radius: 22px;
+  padding: 20px;
+  margin-bottom: 22px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.hero-banner::after { content: '🚚'; position: absolute; right: 16px; bottom: 10px; font-size: 60px; opacity: 0.15; }
+.hero-banner h3 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
+.hero-banner p { font-size: 13px; opacity: 0.7; margin-top: 6px; }
+
+.pkg-card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pkg-left { display: flex; gap: 14px; align-items: center; }
+.pkg-icon { width: 56px; height: 56px; background: var(--orange-light); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; }
+.pkg-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.pkg-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.pkg-price { color: var(--orange); font-weight: 700; font-size: 16px; margin-top: 6px; }
+.add-btn { background: var(--orange); color: white; padding: 10px 20px; border-radius: 20px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.qty-ctrl { display: flex; align-items: center; gap: 12px; }
+.qty-btn { width: 34px; height: 34px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.qty-btn.minus { background: var(--border); }
+.qty-btn.plus { background: var(--orange); color: white; }
+.qty-val { font-weight: 700; font-size: 16px; min-width: 18px; text-align: center; }
+
+.cart-bar { position: absolute; bottom: 0; left: 0; width: 100%; background: white; padding: 16px 22px 28px; border-radius: 28px 28px 0 0; box-shadow: 0 -8px 30px rgba(0,0,0,0.1); transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); z-index: 40; }
+.cart-bar.visible { transform: translateY(0); }
+.cart-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.cart-icon-wrap { position: relative; width: 52px; height: 52px; background: var(--orange); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; }
+.cart-badge-num { position: absolute; top: -6px; right: -6px; background: #1a1a1a; color: white; font-size: 11px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.cart-info .items-count { font-size: 13px; color: var(--text-muted); }
+.cart-info .total { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="screen">
+    <div class="page-header animate-in">
+      <a class="back-btn" href="dashboard.html">←</a>
+      <div class="page-header-text">
+        <h2>Truck Delivery</h2>
+        <p>Heavy & bulk shipments</p>
+      </div>
+    </div>
+
+    <div class="info-pills animate-in">
+      <div class="pill">⏱ 1–3 hours</div>
+      <div class="pill">📍 Up to 50 km</div>
+      <div class="pill">🛡 Fully Insured</div>
+    </div>
+
+    <div class="hero-banner animate-in">
+      <h3>Heavy Loads, Easy Moves</h3>
+      <p>Professional truck delivery for large packages and furniture</p>
+    </div>
+
+    <div class="pkg-card animate-in">
+      <div class="pkg-left">
+        <div class="pkg-icon">📦</div>
+        <div>
+          <div class="pkg-name">Mini Truck</div>
+          <div class="pkg-sub">Up to 500 kg</div>
+          <div class="pkg-price">$35.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-tk-mini" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('tk-mini',-1,35)">−</button>
+        <div class="qty-val" id="qty-tk-mini">1</div>
+        <button class="qty-btn plus" onclick="changeQty('tk-mini',1,35)">+</button>
+      </div>
+      <button class="add-btn" id="add-tk-mini" onclick="addItem('tk-mini','Mini Truck',35)">+ Add</button>
+    </div>
+
+    <div class="pkg-card animate-in">
+      <div class="pkg-left">
+        <div class="pkg-icon">🚚</div>
+        <div>
+          <div class="pkg-name">Standard Truck</div>
+          <div class="pkg-sub">Up to 2 tons</div>
+          <div class="pkg-price">$75.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-tk-std" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('tk-std',-1,75)">−</button>
+        <div class="qty-val" id="qty-tk-std">1</div>
+        <button class="qty-btn plus" onclick="changeQty('tk-std',1,75)">+</button>
+      </div>
+      <button class="add-btn" id="add-tk-std" onclick="addItem('tk-std','Standard Truck',75)">+ Add</button>
+    </div>
+
+    <div class="pkg-card animate-in">
+      <div class="pkg-left">
+        <div class="pkg-icon">🏗️</div>
+        <div>
+          <div class="pkg-name">Heavy Truck</div>
+          <div class="pkg-sub">Up to 5 tons</div>
+          <div class="pkg-price">$150.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-tk-hvy" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('tk-hvy',-1,150)">−</button>
+        <div class="qty-val" id="qty-tk-hvy">1</div>
+        <button class="qty-btn plus" onclick="changeQty('tk-hvy',1,150)">+</button>
+      </div>
+      <button class="add-btn" id="add-tk-hvy" onclick="addItem('tk-hvy','Heavy Truck',150)">+ Add</button>
+    </div>
+
+    <div class="pkg-card animate-in">
+      <div class="pkg-left">
+        <div class="pkg-icon">🛋️</div>
+        <div>
+          <div class="pkg-name">Furniture Move</div>
+          <div class="pkg-sub">With movers</div>
+          <div class="pkg-price">$95.00</div>
+        </div>
+      </div>
+      <div class="qty-ctrl" id="ctrl-tk-fur" style="display:none;">
+        <button class="qty-btn minus" onclick="changeQty('tk-fur',-1,95)">−</button>
+        <div class="qty-val" id="qty-tk-fur">1</div>
+        <button class="qty-btn plus" onclick="changeQty('tk-fur',1,95)">+</button>
+      </div>
+      <button class="add-btn" id="add-tk-fur" onclick="addItem('tk-fur','Furniture Move',95)">+ Add</button>
+    </div>
+
+  </div>
+
+  <div class="cart-bar" id="cartBar">
+    <div class="cart-row">
+      <div class="cart-icon-wrap">🛒
+        <div class="cart-badge-num" id="cart-badge">0</div>
+      </div>
+      <div class="cart-info">
+        <div class="items-count" id="cart-items-label">0 item(s)</div>
+        <div class="total" id="cart-total">$0.00</div>
+      </div>
+    </div>
+    <button class="btn-primary ripple" onclick="window.location.href='cart.html'">Continue to Cart →</button>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+requireAuth();
+function addItem(id, name, price) {
+  Cart.add({ id, name, price });
+  document.getElementById('add-' + id).style.display = 'none';
+  document.getElementById('ctrl-' + id).style.display = 'flex';
+  document.getElementById('qty-' + id).textContent = Cart.get().find(i => i.id === id)?.qty || 1;
+  updateCartBar();
+  showToast(name + ' added!', '✓');
+}
+function changeQty(id, delta, price) {
+  if (delta > 0) Cart.add({ id, name: id, price });
+  else Cart.remove(id);
+  const item = Cart.get().find(i => i.id === id);
+  if (!item) { document.getElementById('add-' + id).style.display = ''; document.getElementById('ctrl-' + id).style.display = 'none'; }
+  else document.getElementById('qty-' + id).textContent = item.qty;
+  updateCartBar();
+}
+function updateCartBar() {
+  const count = Cart.count();
+  document.getElementById('cart-items-label').textContent = `${count} item(s)`;
+  document.getElementById('cart-total').textContent = fmt(Cart.total());
+  document.getElementById('cart-badge').textContent = count;
+  document.getElementById('cartBar').classList.toggle('visible', count > 0);
+}
+Cart.get().forEach(item => {
+  const a = document.getElementById('add-' + item.id), c = document.getElementById('ctrl-' + item.id), q = document.getElementById('qty-' + item.id);
+  if (a && c && q) { a.style.display = 'none'; c.style.display = 'flex'; q.textContent = item.qty; }
+});
+updateCartBar();
+</script>
+</body>
+</html>
